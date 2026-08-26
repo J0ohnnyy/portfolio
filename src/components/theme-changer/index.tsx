@@ -3,6 +3,7 @@ import { SanitizedThemeConfig } from '../../interfaces/sanitized-config';
 import { LOCAL_STORAGE_KEY_NAME } from '../../constants';
 import { skeleton } from '../../utils';
 import { MouseEvent } from 'react';
+import { useLanguage } from '../../i18n';
 
 /**
  * Renders a theme changer component.
@@ -25,6 +26,7 @@ const ThemeChanger = ({
   loading: boolean;
   themeConfig: SanitizedThemeConfig;
 }) => {
+  const { t } = useLanguage();
   const changeTheme = (
     e: MouseEvent<HTMLAnchorElement>,
     selectedTheme: string,
@@ -51,14 +53,14 @@ const ThemeChanger = ({
                 className: 'mb-1',
               })
             ) : (
-              <span className="text-base-content opacity-70">Theme</span>
+              <span className="text-base-content opacity-70">{t('theme')}</span>
             )}
           </h5>
           <span className="text-base-content/50 capitalize text-sm">
             {loading
               ? skeleton({ widthCls: 'w-16', heightCls: 'h-5' })
               : theme === themeConfig.defaultTheme
-                ? 'Default'
+                ? t('defaultTheme')
                 : theme}
           </span>
         </div>
@@ -95,7 +97,9 @@ const ThemeChanger = ({
                         className={`${theme === item ? 'active' : ''}`}
                       >
                         <span className="opacity-60 capitalize">
-                          {item === themeConfig.defaultTheme ? 'Default' : item}
+                          {item === themeConfig.defaultTheme
+                            ? t('defaultTheme')
+                            : item}
                         </span>
                       </a>
                     </li>

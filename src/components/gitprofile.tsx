@@ -28,6 +28,8 @@ import ExternalProjectCard from './external-project-card';
 import BlogCard from './blog-card';
 import Footer from './footer';
 import PublicationCard from './publication-card';
+import LanguageChanger from './language-changer';
+import { useLanguage } from '../i18n';
 
 /**
  * Renders the GitProfile component.
@@ -44,6 +46,7 @@ const GitProfile = ({ config }: { config: Config }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [githubProjects, setGithubProjects] = useState<GithubProject[]>([]);
+  const { content, t, lang } = useLanguage();
 
   const getGithubProjects = useCallback(
     async (publicRepoCount: number): Promise<GithubProject[]> => {
@@ -105,9 +108,11 @@ const GitProfile = ({ config }: { config: Config }) => {
       const data = response.data;
 
       setProfile({
-        avatar: data.avatar_url,
-        name: data.name || ' ',
-        bio: data.bio || '',
+        // --- Local overrides (edit these to change the header without touching GitHub) ---
+        avatar: '/profile.jpg', // Photo served from the public/ folder.
+        name: 'Karim EL HAOURATI',
+        bio: '', // Localized bio is injected at render time (see src/i18n.tsx).
+        // --- The rest still comes from your GitHub profile ---
         location: data.location || '',
         company: data.company || '',
       });
@@ -177,6 +182,18 @@ const GitProfile = ({ config }: { config: Config }) => {
     }
   };
 
+  // Inject the language-specific bio without refetching from GitHub.
+  const localizedProfile = profile
+    ? { ...profile, bio: content.bio }
+    : profile;
+
+  // Bilingual subtitle for the Case Studies section.
+  const caseCount = content.externalProjects.length;
+  const caseStudiesSubtitle =
+    lang === 'fr'
+      ? `${caseCount} cas concret${caseCount > 1 ? 's' : ''}`
+      : `${caseCount} case stud${caseCount > 1 ? 'ies' : 'y'}`;
+
   return (
     <div className="fade-in h-screen">
       {error ? (
@@ -191,6 +208,7 @@ const GitProfile = ({ config }: { config: Config }) => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 rounded-box">
               <div className="col-span-1">
                 <div className="grid grid-cols-1 gap-6">
+                  <LanguageChanger loading={loading} />
                   {!sanitizedConfig.themeConfig.disableSwitch && (
                     <ThemeChanger
                       theme={theme}
@@ -200,39 +218,33 @@ const GitProfile = ({ config }: { config: Config }) => {
                     />
                   )}
                   <AvatarCard
-                    profile={profile}
+                    profile={localizedProfile}
                     loading={loading}
                     avatarRing={sanitizedConfig.themeConfig.displayAvatarRing}
                     resumeFileUrl={sanitizedConfig.resume.fileUrl}
                   />
                   <DetailsCard
-                    profile={profile}
+                    profile={localizedProfile}
                     loading={loading}
                     github={sanitizedConfig.github}
                     social={sanitizedConfig.social}
                   />
-                  {sanitizedConfig.skills.length !== 0 && (
-                    <SkillCard
-                      loading={loading}
-                      skills={sanitizedConfig.skills}
-                    />
-                  )}
-                  {sanitizedConfig.experiences.length !== 0 && (
+                  {content.experiences.length !== 0 && (
                     <ExperienceCard
                       loading={loading}
-                      experiences={sanitizedConfig.experiences}
+                      experiences={content.experiences}
                     />
                   )}
-                  {sanitizedConfig.certifications.length !== 0 && (
+                  {content.certifications.length !== 0 && (
                     <CertificationCard
                       loading={loading}
-                      certifications={sanitizedConfig.certifications}
+                      certifications={content.certifications}
                     />
                   )}
-                  {sanitizedConfig.educations.length !== 0 && (
+                  {content.educations.length !== 0 && (
                     <EducationCard
                       loading={loading}
-                      educations={sanitizedConfig.educations}
+                      educations={content.educations}
                     />
                   )}
                 </div>
@@ -254,14 +266,19 @@ const GitProfile = ({ config }: { config: Config }) => {
                       publications={sanitizedConfig.publications}
                     />
                   )}
-                  {sanitizedConfig.projects.external.projects.length !== 0 && (
+                  {content.externalProjects.length !== 0 && (
                     <ExternalProjectCard
                       loading={loading}
-                      header={sanitizedConfig.projects.external.header}
-                      externalProjects={
-                        sanitizedConfig.projects.external.projects
-                      }
+                      header={t('caseStudies')}
+                      subtitle={caseStudiesSubtitle}
+                      externalProjects={content.externalProjects}
                       googleAnalyticId={sanitizedConfig.googleAnalytics.id}
+                    />
+                  )}
+                  {content.skillGroups.length !== 0 && (
+                    <SkillCard
+                      loading={loading}
+                      skillGroups={content.skillGroups}
                     />
                   )}
                   {sanitizedConfig.blog.display && (

@@ -28,6 +28,7 @@ import {
   SanitizedSocial,
 } from '../../interfaces/sanitized-config';
 import { skeleton } from '../../utils';
+import { useLanguage } from '../../i18n';
 
 type Props = {
   profile: Profile | null;
@@ -151,6 +152,7 @@ const OrganizationItem: React.FC<{
  * @return {JSX.Element} The details card component.
  */
 const DetailsCard = ({ profile, loading, social, github }: Props) => {
+  const { t } = useLanguage();
   const renderSkeleton = () => {
     const array = [];
     for (let index = 0; index < 4; index++) {
@@ -179,7 +181,7 @@ const DetailsCard = ({ profile, loading, social, github }: Props) => {
               {profile.location && (
                 <ListItem
                   icon={<MdLocationOn />}
-                  title="Based in:"
+                  title={t('basedIn')}
                   value={profile.location}
                 />
               )}
@@ -229,7 +231,7 @@ const DetailsCard = ({ profile, loading, social, github }: Props) => {
                 <ListItem
                   icon={<FaLinkedin />}
                   title="LinkedIn:"
-                  value={social.linkedin}
+                  value="Karim El Haourati"
                   link={`https://www.linkedin.com/in/${social.linkedin}`}
                 />
               )}

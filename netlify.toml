@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA fallback — only applies to paths with no matching static file,
+# so the PDFs and assets in /dist are still served directly.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

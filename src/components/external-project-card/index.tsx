@@ -3,18 +3,22 @@ import LazyImage from '../lazy-image';
 import { MdOpenInNew } from 'react-icons/md';
 import { ga, skeleton } from '../../utils';
 import { SanitizedExternalProject } from '../../interfaces/sanitized-config';
+import { useLanguage } from '../../i18n';
 
 const ExternalProjectCard = ({
   externalProjects,
   header,
+  subtitle,
   loading,
   googleAnalyticId,
 }: {
   externalProjects: SanitizedExternalProject[];
   header: string;
+  subtitle?: string;
   loading: boolean;
   googleAnalyticId?: string;
 }) => {
+  const { t } = useLanguage();
   const renderSkeleton = () => {
     const array = [];
     for (let index = 0; index < externalProjects.length; index++) {
@@ -70,14 +74,16 @@ const ExternalProjectCard = ({
   const renderExternalProjects = () => {
     return externalProjects.map((item, index) => (
       <a
-        className="card shadow-md card-sm bg-base-100 cursor-pointer"
+        className={`card shadow-md card-sm bg-base-100 ${
+          item.link ? 'cursor-pointer' : 'cursor-default'
+        }`}
         key={index}
-        href={item.link}
-        onClick={(e) => {
-          e.preventDefault();
-
+        href={item.link || undefined}
+        target={item.link ? '_blank' : undefined}
+        rel="noreferrer"
+        onClick={() => {
           try {
-            if (googleAnalyticId) {
+            if (item.link && googleAnalyticId) {
               ga.event('Click External Project', {
                 post: item.title,
               });
@@ -85,8 +91,6 @@ const ExternalProjectCard = ({
           } catch (error) {
             console.error(error);
           }
-
-          window?.open(item.link, '_blank');
         }}
       >
         <div className="p-8 h-full w-full">
@@ -115,6 +119,12 @@ const ExternalProjectCard = ({
                   <p className="mt-2 text-base-content text-sm text-justify">
                     {item.description}
                   </p>
+                  {item.link && (
+                    <div className="mt-4 flex items-center justify-center gap-1.5 text-primary text-sm font-medium">
+                      <MdOpenInNew className="text-base" />
+                      {t('viewReport')}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -151,7 +161,8 @@ const ExternalProjectCard = ({
                   <div className="text-base-content/60 text-xs sm:text-sm mt-1 truncate">
                     {loading
                       ? skeleton({ widthCls: 'w-32', heightCls: 'h-4' })
-                      : `Showcasing ${externalProjects.length} projects`}
+                      : (subtitle ??
+                        `Showcasing ${externalProjects.length} projects`)}
                   </div>
                 </div>
               </div>

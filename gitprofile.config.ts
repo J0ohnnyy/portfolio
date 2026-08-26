@@ -12,9 +12,9 @@ const CONFIG = {
   base: '/',
   projects: {
     github: {
-      display: false, // Disabled for now — enable once your security projects are pushed to GitHub.
+      display: true, // Shows curated repos from the manual list below.
       header: 'GitHub Projects',
-      mode: 'automatic', // Mode can be: 'automatic' or 'manual'
+      mode: 'manual', // Mode can be: 'automatic' or 'manual'
       automatic: {
         sortBy: 'stars', // Sort projects by 'stars' or 'updated'
         limit: 8, // How many projects to display.
@@ -24,8 +24,13 @@ const CONFIG = {
         },
       },
       manual: {
-        // Properties for manually specifying projects
-        projects: [], // List of repository names to display. example: ['arifszn/my-project1', 'arifszn/my-project2']
+        // Curated list of repositories to display (owner/repo). Add more as you push them.
+        projects: [
+          'J0ohnnyy/soc-detection-lab',
+          'J0ohnnyy/SMSI-VoIP',
+          'J0ohnnyy/SoftPower',
+          'J0ohnnyy/MedData',
+        ],
       },
     },
     external: {

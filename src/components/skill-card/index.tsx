@@ -1,12 +1,15 @@
 import { skeleton } from '../../utils';
+import { useLanguage, SkillGroup } from '../../i18n';
 
 const SkillCard = ({
   loading,
-  skills,
+  skillGroups,
 }: {
   loading: boolean;
-  skills: string[];
+  skillGroups: SkillGroup[];
 }) => {
+  const { t } = useLanguage();
+
   const renderSkeleton = () => {
     const array = [];
     for (let index = 0; index < 12; index++) {
@@ -28,20 +31,38 @@ const SkillCard = ({
             {loading ? (
               skeleton({ widthCls: 'w-32', heightCls: 'h-8' })
             ) : (
-              <span className="text-base-content opacity-70">Tech Stack</span>
+              <span className="text-base-content opacity-70">
+                {t('techStack')}
+              </span>
             )}
           </h5>
         </div>
-        <div className="p-3 flow-root">
-          <div className="-m-1 flex flex-wrap justify-center gap-2">
-            {loading
-              ? renderSkeleton()
-              : skills.map((skill, index) => (
-                  <div key={index} className="badge badge-primary badge-sm">
-                    {skill}
+        <div className="p-3">
+          {loading ? (
+            <div className="-m-1 flex flex-wrap justify-center gap-2">
+              {renderSkeleton()}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-5">
+              {skillGroups.map((group, groupIndex) => (
+                <div key={groupIndex}>
+                  <div className="text-sm font-semibold text-base-content opacity-60 mb-2">
+                    {group.name}
                   </div>
-                ))}
-          </div>
+                  <div className="flex flex-wrap gap-2">
+                    {group.skills.map((skill, skillIndex) => (
+                      <div
+                        key={skillIndex}
+                        className="badge badge-primary badge-sm"
+                      >
+                        {skill}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
