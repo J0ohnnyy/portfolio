@@ -26,6 +26,7 @@ const CONFIG = {
       manual: {
         // Curated list of repositories to display (owner/repo). Add more as you push them.
         projects: [
+          'J0ohnnyy/ai-threat-detection',
           'J0ohnnyy/ad-attack-defense-lab',
           'J0ohnnyy/soc-detection-lab',
           'J0ohnnyy/SMSI-VoIP',
